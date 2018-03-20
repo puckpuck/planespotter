@@ -47,7 +47,7 @@ metadata:
   namespace: planespotter
 spec:
   rules:
-  - host: planespotter.pks.yves.local
+  - host: planespotter.vballin.com
     http:
       paths:
       - backend:
