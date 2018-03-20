@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: planespotter-frontend
-        image: IMAGE_NAME
+        image: FRONTEND_IMAGE_NAME
         imagePullPolicy: IfNotPresent
         env:
         - name: PLANESPOTTER_API_ENDPOINT
