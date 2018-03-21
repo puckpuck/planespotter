@@ -94,7 +94,7 @@ class Plane(db.Model):
 @app.route('/api/planedetails/<icao>')
 def planedetails(icao):
     if not check_tcp_socket(adsb_server['host'], 80):
-        return 'Connection to ADSB Exchange Server broken', 500
+        return 'Uhhh OH! Connection to ADSB Exchange Server broken', 500
 
     req = requests.get('https://{}{}{}{}'.format(adsb_server['host'],
                                                  adsb_server['path'],
