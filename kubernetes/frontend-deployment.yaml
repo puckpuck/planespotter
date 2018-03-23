@@ -47,7 +47,7 @@ metadata:
   namespace: planespotter
 spec:
   rules:
-  - host: planespotter.vballin.com
+  - host: planespotter.enwd.co.sa.charterlab.com
     http:
       paths:
       - backend:
