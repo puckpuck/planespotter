@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: planespotter
-        image: harbor.vballin.com/plane-spotter/planespotter-app-server:db56d9e24d7e15fd426e248f93952128f7ddd11be2bdfacab894f13448dba519
+        image: yfauser/adsb-sync:1d791ea6e96eb50adb15e773d1d783f511618c97
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
