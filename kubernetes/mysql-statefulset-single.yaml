@@ -14,13 +14,33 @@ spec:
   selector:
     app: mysql
 ---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: mysql-ebs
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql-vol
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: mysql-ebs
+---
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: mysql
   namespace: planespotter
 spec:
-  serviceName: "mysql"
+  serviceName: mysql
   replicas: 1
   template:
     metadata:
@@ -41,12 +61,7 @@ spec:
         volumeMounts:
         - name: mysql-vol
           mountPath: /var/lib/mysql
-  volumeClaimTemplates:
-  - metadata:
-      name: mysql-vol
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "thin"
-      resources:
-        requests:
-          storage: 20Gi
+      volumes:
+      - name: mysql-vol
+        persistentVolumeClaim:
+          claimName: mysql-vol
