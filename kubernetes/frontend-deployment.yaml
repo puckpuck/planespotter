@@ -35,7 +35,7 @@ metadata:
     app: planespotter-frontend
     dns: route53
   annotations:
-    domainName: "planespotter.management.dev.k8s.wavefront.com"
+    domainName: "planespotter.demo.wavefront.com"
 spec:
   ports:
     # the port that this service should serve on
