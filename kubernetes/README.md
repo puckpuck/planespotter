@@ -1,3 +1,6 @@
+## Minikube
+If you don't have a Kubernetes environment, minikube is a really easy way to get going.  To install it on your mac [go here](https://gist.github.com/kevin-smets/b91a34cea662d0c523968472a81788f7). Once installed you can follow the steps below to install this app.  If you alreayd have a Kubernetes environement, just install this app there.
+
 ## Installing on Kubernetes
 
 1. Run `kubectl create namespace planespotter`
