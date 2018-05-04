@@ -3,7 +3,7 @@ How to prepare MySQL for the Demo
 
 ## Install Tools
 
-1. Install unzip and git with `apt-get install unzip git wget`
+1. Install unzip, git and wget with `apt-get install unzip git wget`
 
 
 ## Clone repo
