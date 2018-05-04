@@ -15,11 +15,12 @@ How to prepare MySQL for the Demo
 
 ## Create Database
 
-5. Execute the DB creation script `./planespotter/db-install/create-planespotter-db.sh`. 
+5. Execute the DB creation script `./planespotter/db-install/create-planespotter-db.sh` 
+
 NOTE: The password that gets asked, is the MySQL Root Password.
 
 
 ## Cleanup
 
-If you ever want to recreate the database, you can use the DB deletion scrip `./planespotter/db-install/delete-planespotter-db.sh` to drop the DB, and then Create the Database again.
+If you ever want to recreate the database, you can use the database deletion script `./planespotter/db-install/delete-planespotter-db.sh` to drop the database, and then Create the Database again.
 
