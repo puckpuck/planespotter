@@ -3,18 +3,19 @@ How to prepare MySQL for the Demo
 
 ## Install Tools
 
-1. Install unzip, git and wget with `apt-get install unzip git wget`
+1. Update installation: `apt-get update`
+2. Install unzip, git and wget with `apt-get install unzip git wget`
 
 
 ## Clone repo
 
-2. Clone this repo: `git clone https://github.com/puckpuck/planespotter.git`
-3. Change the two DB shell scripts to be executable `chmod +x ./planespotter/db-install/*.sh`
+3. Clone this repo: `git clone https://github.com/puckpuck/planespotter.git`
+4. Change the two DB shell scripts to be executable `chmod +x ./planespotter/db-install/*.sh`
 
 
 ## Create Database
 
-4. Execute the DB creation script `./planespotter/db-install/create-planespotter-db.sh`. 
+5. Execute the DB creation script `./planespotter/db-install/create-planespotter-db.sh`. 
 NOTE: The password that gets asked, is the MySQL Root Password.
 
 
