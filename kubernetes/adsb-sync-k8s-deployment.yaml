@@ -27,12 +27,12 @@ metadata:
     app: redis-server
     tier: backend
 spec:
-  type: LoadBalancer
   ports:
   - port: 6379
   selector:
     app: redis-server
     tier: backend
+  clusterIP: None
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
       - name: adsb-sync
-        image: yfauser/adsb-sync:1d791ea6e96eb50adb15e773d1d783f511618c97
+        image: yfauser/adsb-sync
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: config-volume

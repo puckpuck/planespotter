@@ -14,18 +14,6 @@ spec:
   selector:
     app: mysql
 ---
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: mysql-vol
-  namespace: planespotter
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
----
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
