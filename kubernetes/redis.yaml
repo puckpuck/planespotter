@@ -17,8 +17,7 @@ spec:
         ports:
         - containerPort: 6379
       - name: telegraf
-        image: wavefront/telegraf
-        imagePullPolicy: Never
+        image: puckpuck/wavefront-telegraf
         ports:
         - name: udp-statsd
           containerPort: 8125
