@@ -1,0 +1,94 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-server
+  namespace: planespotter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis-server
+        tier: backend
+    spec:
+      containers:
+      - name: redis-server
+        image: redis
+        ports:
+        - containerPort: 6379
+      - name: telegraf
+        image: wavefront/telegraf
+        imagePullPolicy: Never
+        ports:
+        - name: udp-statsd
+          containerPort: 8125
+        - name: udp-8092
+          containerPort: 8092
+        - name: tcp-8094
+          containerPort: 8094
+        env:
+        - name: WAVEFRONT_PROXY
+          value: wavefront-proxy.default
+        - name: INTERVAL
+          value: 20s
+        - name: NODE_HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        resources:
+          requests:
+            memory: 30Mi
+            cpu: 100m
+          limits:
+            memory: 50Mi
+            cpu: 200m
+        volumeMounts:
+        - name: telegraf-d
+          mountPath: /etc/telegraf/telegraf.d
+      volumes:
+      - name: telegraf-d
+        projected:
+          sources:
+          - configMap:
+              name: telegraf-redis-config 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-server
+  namespace: planespotter
+  labels:
+    app: redis-server
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis-server
+    tier: backend
+  clusterIP: None
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telegraf-redis-config
+  namespace: planespotter
+data:
+  redis.conf: |
+    [[inputs.redis]]
+      ## specify servers via a url matching:
+      ##  [protocol://][:password]@address[:port]
+      ##  e.g.
+      ##    tcp://localhost:6379
+      ##    tcp://:password@192.168.99.100
+      ##
+      ## If no servers are specified, then localhost is used as the host.
+      ## If no port is specified, 6379 is used
+      servers = ["tcp://localhost:6379"]
+
+      # Specify optional tags to be applied to all metrics for this plugin
+      # NOTE: Order matters, this needs to be at the end of the plugin definition
+      # [[inputs.redis.tags]]
+        # tag1 = "foo"
+        # tag2 = "bar"
+

@@ -1,0 +1,156 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: planespotter
+  labels:
+    app: mysql
+spec:
+  ports:
+  - port: 3306
+    name: mysql
+  clusterIP: None
+  selector:
+    app: mysql
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: planespotter
+spec:
+  serviceName: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql
+        image: mysql:5.6
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-vol
+          mountPath: /var/lib/mysql
+      - name: telegraf
+        image: wavefront/telegraf
+        imagePullPolicy: Never
+        ports:
+        - name: udp-statsd
+          containerPort: 8125
+        - name: udp-8092
+          containerPort: 8092
+        - name: tcp-8094
+          containerPort: 8094
+        env:
+        - name: WAVEFRONT_PROXY
+          value: wavefront-proxy.default
+        - name: INTERVAL
+          value: 60s
+        - name: NODE_HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        resources:
+          requests:
+            memory: 30Mi
+            cpu: 100m
+          limits:
+            memory: 50Mi
+            cpu: 200m
+        volumeMounts:
+        - name: telegraf-d
+          mountPath: /etc/telegraf/telegraf.d 
+      volumes:
+      - name: mysql-vol
+        persistentVolumeClaim:
+          claimName: mysql-vol
+      - name: telegraf-d
+        projected:
+          sources:
+          - configMap:
+              name: telegraf-mysql-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telegraf-mysql-config
+  namespace: planespotter
+data:
+  mysql.conf: |
+    [[inputs.mysql]]
+      ## specify servers via a url matching:
+      ##  [username[:password]@][protocol[(address)]]/[?tls=[true|false|skip-verify]]
+      ##  see https://github.com/go-sql-driver/mysql#dsn-data-source-name
+      ##  e.g.
+      ##    servers = ["user:passwd@tcp(127.0.0.1:3306)/?tls=false"]
+      ##    servers = ["user@tcp(127.0.0.1:3306)/?tls=false"]
+      #
+      # UPDATE THIS FIELD HERE.  USE ENV VARIABLES IF NEEDED
+      servers = ["root:password@tcp(localhost:3306)/"]
+      #
+      ## the limits for metrics form perf_events_statements
+      perf_events_statements_digest_text_limit  = 120
+      perf_events_statements_limit              = 250
+      perf_events_statements_time_limit         = 86400
+      #
+      ## if the list is empty, then metrics are gathered from all database tables
+      table_schema_databases                    = []
+      #
+      ## gather metrics from INFORMATION_SCHEMA.TABLES for databases provided above list
+      gather_table_schema                       = false
+      #
+      ## gather thread state counts from INFORMATION_SCHEMA.PROCESSLIST
+      gather_process_list                       = true
+      #
+      ## gather thread state counts from INFORMATION_SCHEMA.USER_STATISTICS
+      gather_user_statistics                    = true
+      #
+      ## gather auto_increment columns and max values from information schema
+      gather_info_schema_auto_inc               = true
+      #
+      ## gather metrics from INFORMATION_SCHEMA.INNODB_METRICS
+      gather_innodb_metrics                     = true
+      #
+      ## gather metrics from SHOW SLAVE STATUS command output
+      gather_slave_status                       = true
+      #
+      ## gather metrics from SHOW BINARY LOGS command output
+      gather_binary_logs                        = false
+      #
+      ## gather metrics from PERFORMANCE_SCHEMA.TABLE_IO_WAITS_SUMMARY_BY_TABLE
+      gather_table_io_waits                     = false
+      #
+      ## gather metrics from PERFORMANCE_SCHEMA.TABLE_LOCK_WAITS
+      gather_table_lock_waits                   = false
+      #
+      ## gather metrics from PERFORMANCE_SCHEMA.TABLE_IO_WAITS_SUMMARY_BY_INDEX_USAGE
+      gather_index_io_waits                     = false
+      #
+      ## gather metrics from PERFORMANCE_SCHEMA.EVENT_WAITS
+      gather_event_waits                        = false
+      #
+      ## gather metrics from PERFORMANCE_SCHEMA.FILE_SUMMARY_BY_EVENT_NAME
+      gather_file_events_stats                  = false
+      #
+      ## gather metrics from PERFORMANCE_SCHEMA.EVENTS_STATEMENTS_SUMMARY_BY_DIGEST
+      gather_perf_events_statements             = false
+      #
+      ## Some queries we may want to run less often (such as SHOW GLOBAL VARIABLES)
+      interval_slow                             = "30m"
+
+      # Specify optional tags to be applied to all metrics for this plugin
+      # NOTE: Order matters, this needs to be at the end of the plugin definition
+      # [[inputs.mysql.tags]]
+        # tag1 = "foo"
+        # tag2 = "bar"
+
