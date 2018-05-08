@@ -33,9 +33,7 @@ spec:
         - name: METRIC_SOURCE_NAME
           # This can be change to use the Deployment / Statefulset name instead as a simple value
           # The metric source name should not be an ephemeral value
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
+          value: planespotter-redis
         - name: POD_NAME
           valueFrom:
             fieldRef:
