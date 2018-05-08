@@ -30,6 +30,20 @@ spec:
           value: wavefront-proxy.default
         - name: INTERVAL
           value: 20s
+        - name: METRIC_SOURCE_NAME
+          # This can be change to use the Deployment / Statefulset name instead as a simple value
+          # The metric source name should not be an ephemeral value
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         - name: NODE_HOSTNAME
           valueFrom:
             fieldRef:
