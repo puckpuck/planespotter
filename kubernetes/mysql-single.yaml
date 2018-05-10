@@ -42,7 +42,7 @@ spec:
         - name: mysql-vol
           mountPath: /var/lib/mysql
       - name: telegraf
-        image: puckpuck/wavefront-telegraf
+        image: puckpuck/wavefront-telegraf-sidecar
         ports:
         - name: udp-statsd
           containerPort: 8125
