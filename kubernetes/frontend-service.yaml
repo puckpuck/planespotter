@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: planespotter
+  name: planespotter-frontend
+  labels:
+    app: planespotter-frontend
+spec:
+  ports:
+    # the port that this service should serve on
+    - port: 80
+  selector:
+    app: planespotter-frontend
+  type: LoadBalancer    
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: planespotter-frontend
+  namespace: planespotter
+spec:
+  rules:
+  - host: planespotter.vballin.com
+    http:
+      paths:
+      - backend:
+          serviceName: planespotter-frontend
+          servicePort: 80

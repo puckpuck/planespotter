@@ -1,31 +1,3 @@
----
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: planespotter-frontend
-  namespace: planespotter
-  labels:
-    app: planespotter-frontend
-    tier: frontend
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: planespotter-frontend
-  template:
-    metadata:
-      labels:
-        app: planespotter-frontend
-        tier: frontend
-    spec:
-      containers:
-      - name: planespotter-frontend
-        image: yfauser/planespotter-frontend:b0a8b3186c3c18fd23632cf45ff7504b23e7c5b9
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: PLANESPOTTER_API_ENDPOINT
-          value: planespotter-svc
----
 apiVersion: v1
 kind: Service
 metadata:
