@@ -25,6 +25,8 @@ spec:
           value: https://CUSTOMER_CLUSTER.wavefront.com/api/
         - name: WAVEFRONT_TOKEN
           value: CUSTOMER_TOKEN
+        - name: JAVA_HEAP_USAGE
+          value: 640m
         ports:
         - containerPort: 2878
           protocol: TCP
