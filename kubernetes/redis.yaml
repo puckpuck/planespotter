@@ -17,7 +17,7 @@ spec:
         ports:
         - containerPort: 6379
       - name: telegraf
-        image: puckpuck/wavefront-telegraf-sidecar
+        image: wavefronthq/telegraf-sidecar
         ports:
         - name: udp-statsd
           containerPort: 8125
