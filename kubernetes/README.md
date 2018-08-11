@@ -8,8 +8,6 @@ Before installing you should have deployed Wavefront monitoring of your Kubernet
 
 1. Run `kubectl create namespace planespotter`
 1. Install app: `kubectl apply -f .`
-1. Get bash shell on MySQL pod (pod name may be different) `kubectl exec -it -n planespotter mysql-0 bash`
-1. Configure database [database install](../db-install)
 
 ## Getting URL from minikube
 
