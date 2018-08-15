@@ -13,16 +13,16 @@ spec:
     app: planespotter-frontend
   type: LoadBalancer    
 ---
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: planespotter-frontend
-  namespace: planespotter
-spec:
-  rules:
-  - host: planespotter.vballin.com
-    http:
-      paths:
-      - backend:
-          serviceName: planespotter-frontend
-          servicePort: 80
+#apiVersion: extensions/v1beta1
+#kind: Ingress
+#metadata:
+#  name: planespotter-frontend
+#  namespace: planespotter
+#spec:
+#  rules:
+#  - host: planespotter.vballin.com
+#    http:
+#      paths:
+#      - backend:
+#         serviceName: planespotter-frontend
+#         servicePort: 80

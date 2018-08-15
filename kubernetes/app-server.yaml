@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: planespotter
-        image: yfauser/planespotter-app-server
+        image: yfauser/planespotter-app-server:1508888202fc85246248c0892c0d27dda34de8e1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
@@ -62,16 +62,16 @@ spec:
     app: planespotter
   clusterIP: None
 ---
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: planespotter-app-ingress
-  namespace: planespotter
-spec:
-  rules:
-  - host: planespotter-api.vballin.com
-    http:
-      paths:
-      - backend:
-          serviceName: planespotter-svc
-          servicePort: 80
+#apiVersion: extensions/v1beta1
+#kind: Ingress
+#metadata:
+#  name: planespotter-app-ingress
+#  namespace: planespotter
+#spec:
+#  rules:
+#  - host: planespotter-api.vballin.com
+#    http:
+#      paths:
+#      - backend:
+#          serviceName: planespotter-svc
+#          servicePort: 80

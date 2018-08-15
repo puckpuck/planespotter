@@ -20,8 +20,65 @@ spec:
     spec:
       containers:
       - name: planespotter-frontend
-        image: yfauser/planespotter-frontend
+        image: nvpnathan/planespotter-frontend:v1
         imagePullPolicy: IfNotPresent
         env:
         - name: PLANESPOTTER_API_ENDPOINT
           value: planespotter-svc
+      - name: telegraf
+        image: wavefronthq/telegraf-sidecar
+        ports:
+        - name: udp-statsd
+          containerPort: 8125
+        - name: udp-8092
+          containerPort: 8092
+        - name: tcp-8094
+          containerPort: 8094
+        env:
+        - name: WAVEFRONT_PROXY
+          value: wavefront-proxy.default
+        - name: INTERVAL
+          value: 20s
+        - name: METRIC_SOURCE_NAME
+          # This can be change to use the Deployment / Statefulset name instead as a simple value
+          # The metric source name should not be an ephemeral value
+          value: planespotter-nginx
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        resources:
+          requests:
+            memory: 30Mi
+            cpu: 100m
+          limits:
+            memory: 50Mi
+            cpu: 200m
+        volumeMounts:
+        - name: telegraf-d
+          mountPath: /etc/telegraf/telegraf.d
+      volumes:
+      - name: telegraf-d
+        projected:
+          sources:
+          - configMap:
+              name: telegraf-nginx-config 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telegraf-nginx-config
+  namespace: planespotter
+data:
+  nginx.conf: |
+    [[inputs.nginx]]
+      urls = ["http://localhost/basic_status"]
+      response_timeout = "5s"
