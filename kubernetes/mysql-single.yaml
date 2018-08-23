@@ -1,19 +1,3 @@
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql
-  namespace: planespotter
-  labels:
-    app: mysql
-spec:
-  ports:
-  - port: 3306
-    name: mysql
-  clusterIP: None
-  selector:
-    app: mysql
----
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
@@ -26,6 +10,7 @@ spec:
     metadata:
       labels:
         app: mysql
+        tier: backend
     spec:
       terminationGracePeriodSeconds: 10
       containers:
@@ -107,6 +92,21 @@ spec:
           name: mysql-start-map
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: planespotter
+  labels:
+    app: mysql
+spec:
+  ports:
+  - port: 3306
+    name: mysql
+  clusterIP: None
+  selector:
+    app: mysql
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: telegraf-mysql-config
@@ -114,14 +114,6 @@ metadata:
 data:
   mysql.conf: |
     [[inputs.mysql]]
-      ## specify servers via a url matching:
-      ##  [username[:password]@][protocol[(address)]]/[?tls=[true|false|skip-verify]]
-      ##  see https://github.com/go-sql-driver/mysql#dsn-data-source-name
-      ##  e.g.
-      ##    servers = ["user:passwd@tcp(127.0.0.1:3306)/?tls=false"]
-      ##    servers = ["user@tcp(127.0.0.1:3306)/?tls=false"]
-      #
-      # UPDATE THIS FIELD HERE.  USE ENV VARIABLES IF NEEDED
       servers = ["root:password@tcp(localhost:3306)/"]
       #
       ## the limits for metrics form perf_events_statements
@@ -139,7 +131,7 @@ data:
       gather_process_list                       = true
       #
       ## gather thread state counts from INFORMATION_SCHEMA.USER_STATISTICS
-      gather_user_statistics                    = true
+      gather_user_statistics                    = false
       #
       ## gather auto_increment columns and max values from information schema
       gather_info_schema_auto_inc               = true
@@ -173,12 +165,6 @@ data:
       #
       ## Some queries we may want to run less often (such as SHOW GLOBAL VARIABLES)
       interval_slow                             = "30m"
-
-      # Specify optional tags to be applied to all metrics for this plugin
-      # NOTE: Order matters, this needs to be at the end of the plugin definition
-      # [[inputs.mysql.tags]]
-        # tag1 = "foo"
-        # tag2 = "bar"
 ---
 apiVersion: v1
 kind: ConfigMap
